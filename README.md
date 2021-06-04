@@ -1,6 +1,7 @@
 # glm_inverse_perspective
 Compute inverse of perspective glm::mat4 matrix
 
+Uses 26 multiplications instead of 120. No additions and a lot less temporary storage, hence less memory accesses, resulting in better performance.
 
 ```cpp
 #pragma once
