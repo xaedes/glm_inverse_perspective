@@ -4,7 +4,7 @@
 
 glm::mat4 inverse_perspective(const glm::mat4& m)
 {
-    // generic perspective transformation matrix of form [
+    // generic perspective projection matrix of form [
     //  a,0,0,0,
     //  0,b,0,0,
     //  0,0,c,d,
