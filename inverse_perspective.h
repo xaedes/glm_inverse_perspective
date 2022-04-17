@@ -4,23 +4,30 @@
 
 glm::mat4 inverse_perspective(const glm::mat4& m)
 {
-    // Based on compute_inverse<4, 4, T, Q, Aligned> from extern/glm/glm/detail/func_matrix.inl
-    // a lot of values in perspective matrices (see extern/glm/glm/ext/matrix_clip_space.inl) are zero,
-    // simplify compute_inverse<4, 4, T, Q, Aligned> using all known zeros:
-    auto Coef00 = 0 - m[3][2] * m[2][3];
-    auto Coef07 = m[1][1] * m[2][3];
+    // generic perspective transformation matrix of form [
+    //  a,0,0,0,
+    //  0,b,0,0,
+    //  0,0,c,d,
+    //  0,0,e,0
+    // ]
+    // 
+    // symbolic inverse is [
+    //  1/a,0,0,0,
+    //  0,1/b,0,0,
+    //  0,0,0,1/e,
+    //  0,0,1/d,-c/(d*e)
+    // ]
 
-    auto Coef10 = m[1][1] * m[3][2];
-    auto Coef11 = m[1][1] * m[2][2];
-
-    glm::mat4 Inverse(
-        +Coef00*m[1][1],0,0,0,
-        0,+m[0][0]*Coef00,0,0,
-        0,0,0,-m[0][0]*Coef07,
-        0,0,-m[0][0]*Coef10,m[0][0]*Coef11
-    );
-    auto Determinant = (m[0][0] * Inverse[0][0]);
-    auto OneOverDeterminant = static_cast<float>(1) / Determinant;
-    return Inverse * OneOverDeterminant;
+    auto a = m[0][0];
+    auto b = m[1][1];
+    auto c = m[2][2];
+    auto d = m[2][3];
+    auto e = m[3][2];
+    glm::mat4 inv = glm::mat4(0);
+    inv[0][0] = 1/a;
+    inv[1][1] = 1/b;
+    inv[2][3] = 1/e;
+    inv[3][2] = 1/d;
+    inv[3][3] = -c/(d*e);
+    return inv;
 }
-
